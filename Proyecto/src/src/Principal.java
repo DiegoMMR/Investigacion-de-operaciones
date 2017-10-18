@@ -7,6 +7,8 @@ package src;
 
 
 import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
@@ -22,9 +24,14 @@ public class Principal extends javax.swing.JFrame {
     private int x;
     private int y;
     private int[][] matriz;
+    private int[][] solucionMatriz;
     private int auxX;
     private int auxY;
+    private int demanda;
+    private int oferta;
     private int aux;
+    public int solucion;
+    
     
     /**
      * Creates new form Principal
@@ -35,9 +42,15 @@ public class Principal extends javax.swing.JFrame {
         //coloca la aplicacion al entro
         this.setLocationRelativeTo(null);
         
+        solucion = 0;
+        demanda = 0;
+        oferta = 0;
         x = 0;
         y = 0;
         cajas = new ArrayList<>();
+        
+        
+        
         
     }
 
@@ -57,12 +70,29 @@ public class Principal extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                formKeyTyped(evt);
+            }
+        });
 
         txtX.setText("4");
+        txtX.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtXKeyTyped(evt);
+            }
+        });
 
         txtY.setText("3");
+        txtY.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtYKeyTyped(evt);
+            }
+        });
 
         panel.setLayout(new java.awt.GridLayout(1, 1));
         jScrollPane1.setViewportView(panel);
@@ -74,7 +104,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Calcular");
+        jButton2.setText("Esquina Nor Oeste");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -88,37 +118,51 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setText("Filas");
+
+        jLabel2.setText("Columnas");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtY, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
-                            .addComponent(txtX))
+                            .addComponent(txtY)
+                            .addComponent(txtX, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 287, Short.MAX_VALUE)
-                        .addComponent(jButton2))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
+                        .addComponent(jButton2)))
                 .addGap(30, 30, 30))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(txtX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtX, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -129,58 +173,175 @@ public class Principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void CrearMatriz()
-    {
+    
+    
+    public void CrearMatriz() {
         y = Integer.parseInt(txtX.getText());
         x = Integer.parseInt(txtY.getText());
-        
+
         //crea un limite de objetos por filas y columnas en el panel
         panel.setLayout(new GridLayout(x, y, 5, 5));
         
-        for (int i = 0; i < x; i++)
-        {
-            for (int j = 0; j < y; j++)
-            {
-                JTextField texto = new JTextField("(" + i + ", " + j + ")");
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                
+                //crea un textfield con limitacion a solo numeros
+                JTextField texto = new JTextField();
+                texto.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyTyped(KeyEvent e) {
+                        char c = e.getKeyChar();
+                        if (!(Character.isDigit(c)
+                                || (c == KeyEvent.VK_BACK_SPACE)
+                                || (c == KeyEvent.VK_DELETE))) {
+                            getToolkit().beep();
+                            e.consume();
+                        }
+                    }
+                });
+                
+                
                 panel.add(texto);
                 cajas.add(texto);
             }
         }
-        
+
         panel.updateUI();
     }
-    
-    public void VaciarlPanel()
-    {
+
+    public void Reset() {
         panel.removeAll();
         panel.updateUI();
+
+        solucion = 0;
+        demanda = 0;
+        oferta = 0;
+        x = 0;
+        y = 0;
+        cajas.clear();
+
     }
+
     
-    public void LlenarMatriz()
+    public void ImprimirMatriz(int[][] matriz)
     {
-        matriz = new int[x][y];
-        
-        auxX = x - 1;
-        auxY = y - 1;
-        aux = 0;
-        
+         //impime la matriz
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
-                matriz[i][j] = Integer.parseInt(cajas.get(aux).getText());
                 System.out.print(matriz[i][j] + " ");
-                aux++;
             }
             System.out.println();
         }
-        
-        
-
-        /*for (int x = 0; x < cajas.size(); x++) {
-            System.out.println(cajas.get(x).getText());
-        }*/
-
     }
     
+    //esta funcion esta porque se creaba un espejo que cambiaba las 2 matrices al hacer solucionMatriz = matriz;
+    public void ClonarMatriz()
+    {
+        
+        solucionMatriz = new int[x][y];
+        
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                solucionMatriz[i][j] = matriz[i][j];
+            }
+            System.out.println();
+        }
+    }
+    
+    public void LlenarMatriz() {
+        matriz = new int[x][y];
+
+        aux = 0;
+        
+        //recorre toda la lista y va llenando la matriz con los datos de cada caja de texto
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                matriz[i][j] = Integer.parseInt(cajas.get(aux).getText());
+                aux++;
+            }
+        }
+        
+    }
+    
+   
+
+    public void EsquinaNO() {
+       
+        ClonarMatriz();
+        
+        auxX = x - 1;
+        auxY = y - 1;
+
+        for (int i = 0; i < auxX; i++) {
+            for (int j = 0; j < auxY; j++) {
+
+                demanda = solucionMatriz[i][auxY];
+                oferta = solucionMatriz[auxX][j];
+
+                //revisa la disponibilidad de la oferta y la demanda para saber cual colocar 
+                
+                if (oferta < demanda) {
+                    solucionMatriz[i][j] = oferta;
+
+                    solucionMatriz[i][auxY] -= oferta;
+                    solucionMatriz[auxX][j] -= oferta;
+
+                }
+
+                if (oferta > demanda) {
+                    solucionMatriz[i][j] = demanda;
+
+                    solucionMatriz[i][auxY] -= demanda;
+                    solucionMatriz[auxX][j] -= demanda;
+
+                }
+
+                if (oferta == demanda) {
+                    solucionMatriz[i][j] = demanda;
+
+                    solucionMatriz[i][auxY] -= demanda;
+                    solucionMatriz[auxX][j] -= demanda;
+                }
+
+            }
+
+        }
+        
+        System.out.println();
+
+       ImprimirMatriz(matriz);
+       System.out.println();
+       ImprimirMatriz(solucionMatriz);
+       System.out.println();
+
+    }
+
+    public void PonerSolucion() {
+        aux = 0;
+        solucion = 0;
+
+        for (int i = 0; i < x - 1; i++) {
+            for (int j = 0; j < y - 1; j++) {
+                
+                solucion += matriz[i][j] * solucionMatriz[i][j];                
+            }
+        }
+        
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                
+                if(i == x-1 && j == y-1)
+                {
+                    cajas.get(aux).setText(String.valueOf(solucion));
+                }else
+                {
+                    cajas.get(aux).setText(matriz[i][j] + ", " + solucionMatriz[i][j]);
+                }   
+                aux ++;
+            }
+        }
+        
+    }
     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         CrearMatriz();
@@ -188,11 +349,43 @@ public class Principal extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        LlenarMatriz();
+       EsquinaNO();
+       PonerSolucion();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        VaciarlPanel();
+        Reset();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    
+    
+    
+    
+    
+    
+    private void txtXKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtXKeyTyped
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c)
+                || (c == KeyEvent.VK_BACK_SPACE)
+                || (c == KeyEvent.VK_DELETE))) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtXKeyTyped
+
+    private void formKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyTyped
+        
+    }//GEN-LAST:event_formKeyTyped
+
+    private void txtYKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtYKeyTyped
+        char c = evt.getKeyChar();
+        if (!(Character.isDigit(c)
+                || (c == KeyEvent.VK_BACK_SPACE)
+                || (c == KeyEvent.VK_DELETE))) {
+            getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtYKeyTyped
 
     /**
      * @param args the command line arguments
@@ -233,6 +426,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panel;
     private javax.swing.JTextField txtX;
