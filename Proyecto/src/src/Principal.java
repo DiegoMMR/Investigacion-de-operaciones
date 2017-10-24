@@ -24,13 +24,17 @@ public class Principal extends javax.swing.JFrame {
     private int x;
     private int y;
     private int[][] matriz;
+    private int[][] matrizMinimo;
     private int[][] solucionMatriz;
     private int auxX;
     private int auxY;
     private int demanda;
     private int oferta;
     private int aux;
-    public int solucion;
+    private int solucion;
+    private int minimoX;
+    private int minimoY;
+    private int auxMinimo;
     
     
     /**
@@ -45,6 +49,9 @@ public class Principal extends javax.swing.JFrame {
         solucion = 0;
         demanda = 0;
         oferta = 0;
+        minimoX = 0;
+        minimoY = 0;
+        auxMinimo = 0;
         x = 0;
         y = 0;
         cajas = new ArrayList<>();
@@ -72,6 +79,7 @@ public class Principal extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -122,6 +130,13 @@ public class Principal extends javax.swing.JFrame {
 
         jLabel2.setText("Columnas");
 
+        jButton4.setText("Costos Minimos");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,7 +160,9 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(txtX, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2)))
                 .addGap(21, 21, 21))
         );
@@ -161,7 +178,8 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(txtY, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(jButton4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -187,6 +205,7 @@ public class Principal extends javax.swing.JFrame {
                 //crea un textfield con limitacion a solo numeros
                 JTextField texto = new JTextField();
                 texto.addKeyListener(new KeyAdapter() {
+                    //hace que solo se ingresen numeros en ese jTextField
                     @Override
                     public void keyTyped(KeyEvent e) {
                         char c = e.getKeyChar();
@@ -215,6 +234,9 @@ public class Principal extends javax.swing.JFrame {
         solucion = 0;
         demanda = 0;
         oferta = 0;
+        minimoX = 0;
+        minimoY = 0;
+        auxMinimo = 0;
         x = 0;
         y = 0;
         cajas.clear();
@@ -238,10 +260,18 @@ public class Principal extends javax.swing.JFrame {
     {
         
         solucionMatriz = new int[x][y];
+        matrizMinimo = new int[x][y];
         
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 solucionMatriz[i][j] = matriz[i][j];
+            }
+            System.out.println();
+        }
+        
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++) {
+                matrizMinimo[i][j] = matriz[i][j];
             }
             System.out.println();
         }
@@ -314,11 +344,105 @@ public class Principal extends javax.swing.JFrame {
        System.out.println();
 
     }
+    
+    public void BuscarMinimo() {
+        
+        
+        
+        //primero busca el numero maximo para poder comparar y buscar un minimo
+        for (int i = 0; i < x - 1; i++) {
+            for (int j = 0; j < y - 1; j++) {
 
-    public void PonerSolucion() {
+                if (auxMinimo < matrizMinimo[i][j] && matrizMinimo[i][j] != 0) {
+                    auxMinimo = matrizMinimo[i][j];
+                    minimoX = i;
+                    minimoY = j;
+                    
+                }
+
+            }
+            
+        }
+       
+
+        for (int i = 0; i < x - 1; i++) {
+            for (int j = 0; j < y - 1; j++) {
+
+                if (auxMinimo > matrizMinimo[i][j] && matrizMinimo[i][j] != 0) {
+                    auxMinimo = matrizMinimo[i][j];
+                    minimoX = i;
+                    minimoY = j;
+                    
+                }
+
+            }
+        }
+        System.out.println("minimo encontrado = " + auxMinimo + " en: " + minimoX + "," + minimoY);
+    }
+    
+    public void CostosMinimos()
+    {
+        ClonarMatriz();
+        
+        auxX = x - 1;
+        auxY = y - 1;
+                       
+        for (int i = 0; i < x-1; i++) {
+            for (int j = 0; j < y-1; j++) {
+                
+                BuscarMinimo();
+                
+                demanda = solucionMatriz[minimoX][auxY];
+                oferta = solucionMatriz[auxX][minimoY];
+                
+                if (oferta < demanda) {
+                    solucionMatriz[minimoX][minimoY] = oferta;
+
+                    solucionMatriz[minimoX][auxY] -= oferta;
+                    solucionMatriz[auxX][minimoY] -= oferta;
+                    
+                    matrizMinimo[minimoX][minimoY] = 0;
+
+                }
+
+                if (oferta > demanda) {
+                    solucionMatriz[minimoX][minimoY] = demanda;
+
+                    solucionMatriz[minimoX][auxY] -= demanda;
+                    solucionMatriz[auxX][minimoY] -= demanda;
+                    
+                    matrizMinimo[minimoX][minimoY] = 0;
+
+                }
+
+                if (oferta == demanda) {
+                    solucionMatriz[minimoX][minimoY] = demanda;
+
+                    solucionMatriz[minimoX][auxY] -= demanda;
+                    solucionMatriz[auxX][minimoY] -= demanda;
+                    
+                    matrizMinimo[minimoX][minimoY] = 0;
+                }
+                
+            }
+        }
+       
+       ImprimirMatriz(matriz);
+       System.out.println(); 
+       ImprimirMatriz(matrizMinimo);
+       System.out.println();
+       ImprimirMatriz(solucionMatriz);
+       System.out.println();
+        
+        
+        
+    }
+
+    public void PonerSolucion(int matriz[][], int solucionMatriz[][]) {
         aux = 0;
         solucion = 0;
 
+        //calcula la solcucion con los datos encontrados
         for (int i = 0; i < x - 1; i++) {
             for (int j = 0; j < y - 1; j++) {
                 
@@ -326,16 +450,28 @@ public class Principal extends javax.swing.JFrame {
             }
         }
         
+        //coloca los valores encontrados dentro de las cajas de texto junto con los costos
         for (int i = 0; i < x; i++) {
             for (int j = 0; j < y; j++) {
                 
                 if(i == x-1 && j == y-1)
                 {
                     cajas.get(aux).setText(String.valueOf(solucion));
-                }else
+                }else if(i == x-1)
+                {
+                    cajas.get(aux).setText(String.valueOf(matriz[i][j]));
+                }else if (j == y-1)
+                {
+                    cajas.get(aux).setText(String.valueOf(matriz[i][j]));
+                }
+                else
                 {
                     cajas.get(aux).setText(matriz[i][j] + ", " + solucionMatriz[i][j]);
-                }   
+                }
+                
+                
+                
+                
                 aux ++;
             }
         }
@@ -349,20 +485,16 @@ public class Principal extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
        LlenarMatriz();
        EsquinaNO();
-       PonerSolucion();
+       PonerSolucion(matriz, solucionMatriz);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         Reset();
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    
-    
-    
-    
-    
+   
     
     private void txtXKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtXKeyTyped
+        //hace que solo se ingresen numeros en ese jTextField
         char c = evt.getKeyChar();
         if (!(Character.isDigit(c)
                 || (c == KeyEvent.VK_BACK_SPACE)
@@ -377,6 +509,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_formKeyTyped
 
     private void txtYKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtYKeyTyped
+        //hace que solo se ingresen numeros en ese jTextField
         char c = evt.getKeyChar();
         if (!(Character.isDigit(c)
                 || (c == KeyEvent.VK_BACK_SPACE)
@@ -385,6 +518,14 @@ public class Principal extends javax.swing.JFrame {
             evt.consume();
         }
     }//GEN-LAST:event_txtYKeyTyped
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+       
+        LlenarMatriz();
+        CostosMinimos();
+        PonerSolucion(matriz, solucionMatriz);
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -425,6 +566,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
